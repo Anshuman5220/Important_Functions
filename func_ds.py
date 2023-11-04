@@ -35,7 +35,7 @@ def aggregate(df,key,val):
     elif val=='median':
         return df[key].median()
     elif val == 'mode':
-        return df['key'].mode()[0]
+        return df[key].mode()[0]
 
 ## Outlier Treatment
 def outlier_fit(df,num,outlier_cap=0.99,version=None):
