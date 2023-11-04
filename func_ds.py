@@ -168,6 +168,26 @@ outlier_fit(imputed_train,num,version=version)
 model_data = outlier_transform(imputed_train1)
 model_data_test = outlier_transform(imputed_test1)
 
+## Standardization and normalisation 
+
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler().set_output(transform="pandas")
+# fit the scaler to the train set, it will learn the parameters
+scaler.fit(X_train)
+# transform train and test sets
+X_train_scaled = scaler.transform(X_train)
+
+from sklearn.preprocessing import MinMaxScaler
+
+# set up the scaler
+scaler = MinMaxScaler().set_output(transform="pandas")
+# fit the scaler to the train set, it will learn the parameters
+scaler.fit(X_train)
+
+# transform train and test sets
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
 
 ## ML Model
