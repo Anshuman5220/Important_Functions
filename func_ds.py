@@ -1,6 +1,32 @@
+## Custom describe with missing values in it
+
+def custom_describe(df):
+    summary = df.describe(percentiles=[0.01,0.1,0.2,0.5,0.9,0.99]).T
+    missing_values = df.isna().sum().T
+    missing_stats = pd.DataFrame({
+        'missing_values': missing_values,
+        'percent_missing': (missing_values / len(df)) * 100
+    })
+    return pd.concat([summary, missing_stats], axis=1)
+
+## Plotting bar chart for categorical variables
+
+def PlotBarCharts(inpData, colsToPlot):
+    %matplotlib inline
+    import matplotlib.pyplot as plt
+    # Generating multiple subplots
+    fig, subPlot=plt.subplots(nrows=1, ncols=len(colsToPlot), figsize=(20,5))
+    fig.suptitle('Bar charts of: '+ str(colsToPlot))
+
+    for colName, plotNumber in zip(colsToPlot, range(len(colsToPlot))):
+        inpData.groupby(colName).size().plot(kind='bar',ax=subPlot[plotNumber])
+
+PlotBarCharts(inpData=ZomatoData, colsToPlot=['col1', 'col2', 'col3'])
+
+## Plotting histogram:
+df.hist(['var1', 'var2', 'var3'], figsize=(18,10))
+
 ## Missing Value Treatment
-
-
 def missing_fit(df,num,cat,version):
     dtypes_num = pd.DataFrame({"col":num,"dtype":"num"})
     dtypes_cat = pd.DataFrame({"col":cat,"dtype":"cat"})
