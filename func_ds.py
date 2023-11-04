@@ -28,7 +28,7 @@ def PlotBarCharts(inpData, colsToPlot):
     for colName, plotNumber in zip(colsToPlot, range(len(colsToPlot))):
         inpData.groupby(colName).size().plot(kind='bar',ax=subPlot[plotNumber])
 
-PlotBarCharts(inpData=ZomatoData, colsToPlot=['col1', 'col2', 'col3'])
+PlotBarCharts(inpData=df, colsToPlot=['col1', 'col2', 'col3'])
 
 ## Plotting histogram:
 df.hist(['var1', 'var2', 'var3'], figsize=(18,10))
