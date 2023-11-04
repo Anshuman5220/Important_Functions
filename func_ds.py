@@ -1,3 +1,10 @@
+
+## Label encoding (One hot encoding)
+df = pd.get_dummies(df, columns=['col_name'], prefix=['prefix_cols'])
+
+## Binary encoding
+df['flag'] = ZomatoData['flag'].map({'Yes': 1, 'No': 0})
+
 ## Custom describe with missing values in it
 
 def custom_describe(df):
