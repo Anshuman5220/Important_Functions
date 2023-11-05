@@ -48,7 +48,7 @@ def missing_fit(df,num,cat,version):
 def missing_transform(df,impute_vals):
     if impute_vals is None:
         raise("Not fitted error")
-    df.fillna(impute_vals)
+    df = df.fillna(impute_vals)
     return df
 
 def _custom_impute(df,dtypes,impute_id):
