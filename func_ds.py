@@ -278,6 +278,37 @@ param_df = expand_grid(param_grid)
 param_df
 
 
+## Optuna
+
+import optuna
+from sklearn.model_selection import cross_val_score, train_test_split
+
+def objective(trial):
+
+    rf_n_estimators = trial.suggest_int("rf_n_estimators", 100, 1000)
+    rf_criterion = trial.suggest_categorical("rf_criterion", ['squared_error'])
+    rf_max_depth = trial.suggest_int("rf_max_depth", 1, 4)
+    rf_min_samples_split = trial.suggest_float("rf_min_samples_split", 0.01, 1)
+    
+    model = RandomForestRegressor(
+        n_estimators=rf_n_estimators,
+        criterion=rf_criterion,
+        max_depth=rf_max_depth,
+        min_samples_split=rf_min_samples_split,
+    )
+
+    score = cross_val_score(model, X_train, y_train, cv=3)
+    accuracy = score.mean()
+    return accuracy
+
+study = optuna.create_study(
+    direction = 'maximize',
+    sampler=optuna.samplers.RandomSampler(),
+)
+
+study.optimize(objective, n_trials=5)
+study.best_params
+
 ## KS table
 
 def ks_table(score,response,indentifier):
