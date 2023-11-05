@@ -220,43 +220,43 @@ from sklearn import metrics
 
 from xgboost import XGBRegressor
 
-def default_xgboost_model(model_num,model_folder,xdev,ydev,xitv,yitv):
+def default_xgboost_model(model_num,xdev,ydev,xitv,yitv):
     if model_num !=0:
-        feature_list = pd.read_csv(model_folder+'/Feature/feature_reduction_iteration'+str(model_num+1)+'.csv',header=0,sep=',')
+        feature_list = pd.read_csv('feature_reduction_iteration'+str(model_num-1)+'.csv',header=0,sep=',')
         feature_list.Variable = feature_list.Variable.apply(lambda x:x.strip())
         xdev=xdev[feature_list[feature_list.CumGain_Prop<=0.95].Variable.values]
         xitv=xitv[feature_list[feature_list.CumGain_Prop<=0.95].Variable.values]
-    os.environ['KMP_DUPLICATE_LIB_OK']='True'
-    model =  XGBRegressor(objective:'reg:squarederror',silent=True,metrics=['rmse'],njobs=6,random_state=0)
+    model =  XGBRegressor(objective='reg:squarederror',silent=True,metrics=['rmse'],njobs=6,random_state=0)
     model.fit(xdev,ydev)
     ## Saving the model
-    joblib.dump(model,model_folder+'/Model/default_model_'+str(model_num)+'.joblib')
+    joblib.dump(model,'default_model_'+str(model_num)+'.joblib')
     ## Make predictions
     pred_dev = model.predict(xdev)
     pred_itv = model.predict(xitv)
     ## Rsq for both itv and otv
     rsq_dev = metrics.r2_score(ydev,pred_dev,sample_weight=None)
     rsq_itv = metrics.r2_score(yitv,pred_itv,sample_weight=None)
-    rmse_dev = metrics.mean_square_error(ydev,pred_dev,sample_weight=None)
-    rmse_itv = metrics.mean_square_error(ydev,pred_dev,sample_weight=None)
+    rmse_dev = metrics.mean_squared_error(ydev,pred_dev,sample_weight=None)
+    rmse_itv = metrics.mean_squared_error(ydev,pred_dev,sample_weight=None)
     ## Obtain Feature Importance
     num_features = len(xdev.columns)
-    feature_dict = model.get_booster().get_score(importance='gain')
+    feature_dict = model.get_booster().get_score(importance_type='gain')
     feature_df = pd.DataFrame.from_dict(feature_dict,orient='index',columns=['Gain']).sort_values(['Gain'],ascending=False)
     feature_df['CumGain'] = feature_df.Gain.cumsum()
     feature_df['CumGain_Prop'] = feature_df.CumGain/max(feature_df.CumGain)
     feature_df['Variable'] = feature_df.index
-    feature_df.to_csv(model_folder+'/Feature/feature_reduction_iteration'+str(model_num)+'.csv',header=True,index=False)
+    feature_df.to_csv('feature_reduction_iteration'+str(model_num)+'.csv',header=True,index=False)
     global result_df
     result_df = result_df.append(pd.DataFrame({'Model_No':model_num,'rsq_dev':rsq_dev,'rsq_itv':rsq_itv,"Ttl_features":num_features},index=[0]))
-    
+
+
 result_df = pd.DataFrame()
 iter=10
 
 for i in range(itr):
     print("Running Iteration {0}".format(i))
-    default_xgboost_model(i,folder_name,xtrain,ytrain,xitv,yitv)
-result_df.to_csv(model_folder+'/Default_Model_Iteration.csv',index=False)
+    default_xgboost_model(i,X_train,y_train,X_test,y_test)
+result_df.to_csv('Default_Model_Iteration.csv',index=False)
 
 
 from itertools import product,chain
