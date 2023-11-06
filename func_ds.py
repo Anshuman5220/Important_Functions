@@ -309,6 +309,36 @@ study = optuna.create_study(
 study.optimize(objective, n_trials=5)
 study.best_params
 
+optuna.visualization.plot_param_importances(study)
+
+## Get All in one dataframe
+
+trial_numbers = []
+hyperparameters_list = []
+objective_values = []
+
+# Access information for all trials
+for trial in study.trials:
+    trial_number = trial.number
+    hyperparameters = trial.params
+    objective_value = trial.value
+
+    trial_numbers.append(trial_number)
+    hyperparameters_list.append(hyperparameters)
+    objective_values.append(objective_value)
+
+# Create a Pandas DataFrame from the lists
+data = {
+    'Trial Number': trial_numbers,
+    'Hyperparameters': hyperparameters_list,
+    'Objective Value': objective_values
+}
+all_iterations = pd.DataFrame(data)
+
+# Print the DataFrame
+print(all_iterations)
+
+
 ## KS table
 
 def ks_table(score,response,indentifier):
