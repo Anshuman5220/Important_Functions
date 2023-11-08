@@ -372,7 +372,7 @@ def find_optimal_cutoff(target,predicted):
     ## Optimal cutoff will be where tpr is high and fpr is low 
     ## tpr - (1-fpr) is 0 or near to zero would be ideal cutoff point
     fpr, tpr, threshold = roc_curve(target,predicted)
-    i = np.arrange(len(tpr))
+    i = np.arange(len(tpr))
     roc = pd.DataFrame({'tf': pd.Series(tpr - (1-fpr),index=i),'threshold':pd.Series(threshold,index=i)})
     roc_t = roc.iloc[(roc.tf-0).abs().argsort()[:1]]
     return list(roc_t['threshold'])
